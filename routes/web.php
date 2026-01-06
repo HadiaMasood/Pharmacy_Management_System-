@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +13,23 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Clear Cache Route
+Route::get('/clear-cache', function() {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    return "Cache cleared successfully!";
+});
+
+// Test Route
+Route::get('/test', function () {
+    return response()->json([
+        'status' => 'OK',
+        'env' => app()->environment(),
+        'app_key' => !empty(config('app.key')) ? 'SET' : 'MISSING'
+    ]);
+});
 
 // Public Routes
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
