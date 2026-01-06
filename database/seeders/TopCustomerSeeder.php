@@ -13,24 +13,24 @@ class TopCustomerSeeder extends Seeder
     public function run()
     {
         // 1. Ensure Main User exists and has high spend
-        $mainUser = User::where('email', 'hello@gmail.com')->first();
-        if (!$mainUser) {
-            $mainUser = User::create([
+        $mainUser = User::firstOrCreate(
+            ['email' => 'hello@gmail.com'],
+            [
                 'name' => 'Muhammad taha Khan',
-                'email' => 'hello@gmail.com',
-                'password' => Hash::make('password'), // Resetting/Setting password to known value if created new
-            ]);
-        }
+                'password' => Hash::make('password'),
+            ]
+        );
 
         // Create a large completed order for main user
-        Order::create([
-            'user_id' => $mainUser->id,
-            'order_no' => 'ORD-' . Str::random(10),
-            'total_amount' => 5000.00,
-            'status' => 'completed',
-            'payment_status' => 'paid',
-            'shipping_address' => '123 Main St'
-        ]);
+        Order::firstOrCreate(
+            ['user_id' => $mainUser->id, 'order_no' => 'ORD-MAIN-001'],
+            [
+                'total_amount' => 5000.00,
+                'status' => 'completed',
+                'payment_status' => 'paid',
+                'shipping_address' => '123 Main St'
+            ]
+        );
 
         // 2. Ensure Competitor User exists with lower spend
         $competitor = User::firstOrCreate(
@@ -39,14 +39,15 @@ class TopCustomerSeeder extends Seeder
         );
 
         // Create a smaller completed order for competitor
-        Order::create([
-            'user_id' => $competitor->id,
-            'order_no' => 'ORD-' . Str::random(10),
-            'total_amount' => 1000.00,
-            'status' => 'completed',
-            'payment_status' => 'paid',
-            'shipping_address' => '456 Side St'
-        ]);
+        Order::firstOrCreate(
+            ['user_id' => $competitor->id, 'order_no' => 'ORD-COMP-001'],
+            [
+                'total_amount' => 1000.00,
+                'status' => 'completed',
+                'payment_status' => 'paid',
+                'shipping_address' => '456 Side St'
+            ]
+        );
 
         $this->command->info("Data seeded!");
         $this->command->info("Winner: hello@gmail.com (Total: 5000)");
