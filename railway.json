@@ -2,12 +2,39 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
-    "buildCommand": "npm install && npm run build && php artisan optimize"
+    "buildCommand": "composer install --optimize-autoloader --no-dev && npm install && npm run build && php artisan optimize"
   },
   "deploy": {
-    "preDeployCommand": "php artisan migrate --force",
+    "preDeployCommand": "php artisan migrate --force && php artisan db:seed --force",
     "startCommand": "php artisan serve --host=0.0.0.0 --port=8080",
     "healthcheckPath": "/",
-    "restartPolicyType": "on_failure"
+    "restartPolicyType": "on_failure",
+    "healthcheckTimeout": 30
+  },
+  "env": {
+    "APP_ENV": "production",
+    "APP_DEBUG": "false",
+    "APP_KEY": {
+      "generator": "secret"
+    },
+    "APP_URL": {
+      "generator": "url"
+    },
+    "DB_CONNECTION": "mysql",
+    "DB_HOST": {
+      "from": "RAILWAY_MYSQLHOST"
+    },
+    "DB_PORT": {
+      "from": "RAILWAY_MYSQLPORT"
+    },
+    "DB_DATABASE": {
+      "from": "RAILWAY_MYSQLDATABASE"
+    },
+    "DB_USERNAME": {
+      "from": "RAILWAY_MYSQLUSER"
+    },
+    "DB_PASSWORD": {
+      "from": "RAILWAY_MYSQLPASSWORD"
+    }
   }
 }
